@@ -220,10 +220,4 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 
 ---
 
-## 📄 License
-
-Distributed under the [MIT License](./LICENSE).
-
----
-
 <p align="center">Made with ❤️ by <a href="https://github.com/lecuong1502">Le Kien Cuong</a></p>
