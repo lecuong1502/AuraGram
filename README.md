@@ -2,7 +2,6 @@
 
 > AI-Powered Social Media Platform — Smart photo sharing with fully local AI features.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![React](https://img.shields.io/badge/react-18+-61DAFB.svg?logo=react)
 ![FastAPI](https://img.shields.io/badge/fastapi-0.110+-009688.svg?logo=fastapi)
