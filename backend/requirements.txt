@@ -1,0 +1,43 @@
+# Web framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# Database
+beanie          # ODM on top of Motor + Pydantic v2
+motor           # async MongoDB driver
+pymongo         # sync driver (used by Motor internally)
+
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
+python-multipart==0.0.12    # required for FastAPI form/file uploads
+
+# Config
+pydantic==2.10.3
+pydantic-settings==2.6.1
+python-dotenv==1.0.1
+
+# Task queue
+celery==5.4.0
+redis==5.2.1
+
+# File storage
+cloudinary==1.41.0
+
+# HTTP client
+httpx==0.28.1
+
+# AI — Phase 2 & 3 (optional, comment out if not needed)
+# torch==2.5.1             # install separately via pytorch.org for CUDA support
+# torchvision==0.20.1
+# transformers==4.47.1
+# diffusers==0.31.0
+# accelerate==1.2.1
+# llama-cpp-python==0.3.2  # LLaVA local inference
+# ultralytics==8.3.48      # YOLOv8
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1           # async test client for FastAPI
