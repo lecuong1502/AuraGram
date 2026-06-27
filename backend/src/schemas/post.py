@@ -3,9 +3,9 @@ from typing import Optional
 
 class MediaItemOut(BaseModel):
     url: str
-    width: Optional[int]
-    height: Optional[int]
-    detected_tags: list[str]
+    width: Optional[int] = None
+    height: Optional[int] = None
+    detected_tags: list[str] = []
 
 class PostCreateRequest(BaseModel):
     caption: str = Field(default="", max_length=2200)

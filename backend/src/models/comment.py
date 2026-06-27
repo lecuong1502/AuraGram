@@ -20,7 +20,7 @@ class Reply(BaseModel):
     mention_id: Optional[PydanticObjectId] = None
 
     is_deleted: bool = False
-    created_at: datetime = Field(default_factory=datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class Comment(Document):
@@ -36,8 +36,8 @@ class Comment(Document):
     is_deleted: bool = False
     is_pinned: bool = False  # pinned by post author
 
-    created_at: datetime = Field(default_factory=datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:
         name = "comments"

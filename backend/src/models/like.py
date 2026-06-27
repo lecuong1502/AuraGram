@@ -14,7 +14,7 @@ class Like(Document):
     user_id: PydanticObjectId
     post_id: PydanticObjectId
 
-    created_at: datetime = Field(default_factory=datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:
         name = "likes"

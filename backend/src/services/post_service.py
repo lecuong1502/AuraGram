@@ -73,7 +73,7 @@ async def delete_post(post_id: str, current_user: User) -> None:
 
     # Delete all images from Cloudinary
     for media in post.media:
-        delete_image(media.public_id)
+        await delete_image(media.public_id)
 
     await post.delete()
     await current_user.inc({User.post_count: -1})
@@ -117,8 +117,10 @@ async def toggle_like(post_id: str, user: User) -> dict:
     if existing:
         await existing.delete()
         await post.inc({Post.like_count: -1})
-        return {"liked": False, "like_count": post.like_count - 1}
+        await post.sync()
+        return {"liked": False, "like_count": post.like_count}
     else:
         await Like(user_id=user.id, post_id=post.id).insert()
         await post.inc({Post.like_count: 1})
-        return {"liked": True, "like_count": post.like_count + 1}
+        await post.sync()
+        return {"liked": True, "like_count": post.like_count}

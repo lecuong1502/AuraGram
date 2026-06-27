@@ -26,6 +26,11 @@ async def update_avatar(
     updated = await user_service.update_avatar(current_user, file)
     return updated.to_public()
 
+@router.get("/search", response_model=list[UserPublic])
+async def search(q: str, current_user: User = Depends(get_current_user)):
+    users = await user_service.search_users(q)
+    return [u.to_public() for u in users]
+
 @router.get("/{username}", response_model=UserPublic)
 async def get_profile(username: str):
     user = await user_service.get_profile(username)
@@ -38,8 +43,3 @@ async def follow(user_id: str, current_user: User = Depends(get_current_user)):
 @router.delete("/{user_id}/follow", status_code=204)
 async def unfollow(user_id: str, current_user: User = Depends(get_current_user)):
     await user_service.unfollow(current_user, user_id)
-
-@router.get("/search", response_model=list[UserPublic])
-async def search(q: str, current_user: User = Depends(get_current_user)):
-    users = await user_service.search_users(q)
-    return [u.to_public() for u in users]

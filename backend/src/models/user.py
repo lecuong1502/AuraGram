@@ -28,8 +28,8 @@ class User(Document):
     # Refresh tokens — stored to support revocation
     refresh_tokens: list[str] = Field(default_factory=list, exclude=True)
 
-    created_at: datetime = Field(default_factory=datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:
         name = "users"

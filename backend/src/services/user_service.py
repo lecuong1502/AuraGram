@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status, UploadFile
+import asyncio
 from beanie import PydanticObjectId
 from src.models import User, Follow
 from src.schemas.user import UpdateProfileRequest
@@ -24,12 +25,19 @@ async def update_profile(user: User, data: UpdateProfileRequest) -> User:
 async def update_avatar(user: User, file: UploadFile) -> User:
     # Delete old avatar from Cloudinary if exists
     if user.avatar_public_id:
-        cloudinary.uploader.destroy(user.avatar_public_id)
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(
+            None, lambda: cloudinary.uploader.destroy(user.avatar_public_id)
+        )
 
-    result = cloudinary.uploader.upload(
-        file.file,
-        folder="auragram/avatars",
-        transformation={"width": 300, "height": 300, "crop": "fill"},
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(
+        None,
+        lambda: cloudinary.uploader.upload(
+            file.file,
+            folder="auragram/avatars",
+            transformation={"width": 300, "height": 300, "crop": "fill"},
+        ),
     )
     user.avatar_url = result["secure_url"]
     user.avatar_public_id = result["public_id"]

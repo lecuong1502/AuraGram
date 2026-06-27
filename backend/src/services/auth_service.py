@@ -47,7 +47,8 @@ async def refresh(token: str) -> TokenResponse:
     if payload.get("type") != "refresh":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token type")
 
-    user = await User.get(payload["sub"])
+    from beanie import PydanticObjectId
+    user = await User.get(PydanticObjectId(payload["sub"]))
     if not user or token not in (user.refresh_tokens or []):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token revoked")
 

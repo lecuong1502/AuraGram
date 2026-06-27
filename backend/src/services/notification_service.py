@@ -1,4 +1,5 @@
 from beanie import PydanticObjectId
+from pymongo.errors import DuplicateKeyError
 from src.models import Notification, User
 from src.schemas.notification import NotificationOut, NotificationListResponse
 
@@ -55,5 +56,5 @@ async def push_notification(
     # unique index on (recipient, actor, type, post) handles deduplication
     try:
         await notification.insert()
-    except Exception:
-        pass
+    except DuplicateKeyError:
+        pass  # notification already exists — silently skip

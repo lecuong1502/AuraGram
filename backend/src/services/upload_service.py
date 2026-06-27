@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status, UploadFile
+import asyncio
 import cloudinary
 import cloudinary.uploader
 from src.core.config import settings
@@ -27,10 +28,14 @@ async def upload_image(file: UploadFile, folder: str = "auragram/posts") -> dict
             detail=f"File exceeds {MAX_FILE_SIZE_MB}MB limit",
         )
 
-    result = cloudinary.uploader.upload(
-        contents,
-        folder=folder,
-        resource_type="image",
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(
+        None,
+        lambda: cloudinary.uploader.upload(
+            contents,
+            folder=folder,
+            resource_type="image",
+        ),
     )
     return {
         "url": result["secure_url"],
@@ -39,5 +44,6 @@ async def upload_image(file: UploadFile, folder: str = "auragram/posts") -> dict
         "height": result.get("height"),
     }
 
-def delete_image(public_id: str) -> None:
-    cloudinary.uploader.destroy(public_id)
+async def delete_image(public_id: str) -> None:
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, lambda: cloudinary.uploader.destroy(public_id))

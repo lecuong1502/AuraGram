@@ -18,7 +18,7 @@ class Follow(Document):
     # "pending" when target account is private — awaiting approval
     status: Literal["accepted", "pending"] = "accepted"
 
-    created_at: datetime = Field(default_factory=datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:
         name = "follows"
