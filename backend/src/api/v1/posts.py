@@ -42,3 +42,12 @@ async def toggle_like(
     current_user: User = Depends(get_current_user),
 ):
     return await post_service.toggle_like(post_id, current_user)
+
+
+@router.patch("/{post_id}/archive", status_code=200)
+async def archive_post(
+    post_id: str,
+    current_user: User = Depends(get_current_user),
+):
+    """Toggle archive/unarchive a post (hides from profile grid)."""
+    return await post_service.archive_post(post_id, current_user)

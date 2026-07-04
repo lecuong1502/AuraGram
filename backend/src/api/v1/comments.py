@@ -36,3 +36,12 @@ async def add_reply(
     current_user: User = Depends(get_current_user),
 ):
     return await comment_service.add_reply(comment_id, current_user, data)
+
+
+@router.post("/{comment_id}/pin", response_model=CommentOut)
+async def pin_comment(
+    comment_id: str,
+    current_user: User = Depends(get_current_user),
+):
+    """Toggle pin/unpin a comment. Only the post author can do this."""
+    return await comment_service.pin_comment(comment_id, current_user)

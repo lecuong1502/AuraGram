@@ -1,14 +1,17 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 from src.core.config import settings
 from src.core.database import connect_db
+from src.core.logging import setup_logging
 from src.services.upload_service import init_cloudinary
 from src.api.v1 import api_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    setup_logging()
     await connect_db(settings.MONGODB_URL, settings.DATABASE_NAME)
     init_cloudinary()
     yield
@@ -19,6 +22,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,

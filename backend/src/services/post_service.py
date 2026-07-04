@@ -1,11 +1,14 @@
-from fastapi import HTTPException, UploadFile, status
+from fastapi import HTTPException, status
 from beanie import PydanticObjectId
 from beanie.operators import In
 from src.models import User, Post, Follow, Like
 from src.models.post import MediaItem
 from src.schemas.post import PostCreateRequest, PostOut, FeedResponse
 from src.services.upload_service import upload_image, delete_image
+from src.services.notification_service import push_notification
 from datetime import datetime
+from typing import Optional
+
 
 def _to_out(post: Post) -> PostOut:
     return PostOut(
@@ -25,11 +28,13 @@ def _to_out(post: Post) -> PostOut:
         created_at=post.created_at.isoformat(),
     )
 
+
 async def create_post(
     author: User,
     data: PostCreateRequest,
-    files: list[UploadFile],
+    files: list,
 ) -> PostOut:
+    from fastapi import UploadFile
     if not files or len(files) > 10:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -58,11 +63,13 @@ async def create_post(
 
     return _to_out(post)
 
+
 async def get_post(post_id: str) -> PostOut:
     post = await Post.get(PydanticObjectId(post_id))
     if not post or post.is_archived:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
     return _to_out(post)
+
 
 async def delete_post(post_id: str, current_user: User) -> None:
     post = await Post.get(PydanticObjectId(post_id))
@@ -77,6 +84,7 @@ async def delete_post(post_id: str, current_user: User) -> None:
 
     await post.delete()
     await current_user.inc({User.post_count: -1})
+
 
 async def get_feed(current_user: User, cursor: str | None, limit: int = 20) -> FeedResponse:
     # Get IDs of users that current_user follows
@@ -107,6 +115,7 @@ async def get_feed(current_user: User, cursor: str | None, limit: int = 20) -> F
         has_more=has_more,
     )
 
+
 async def toggle_like(post_id: str, user: User) -> dict:
     post = await Post.get(PydanticObjectId(post_id))
     if not post:
@@ -123,4 +132,109 @@ async def toggle_like(post_id: str, user: User) -> dict:
         await Like(user_id=user.id, post_id=post.id).insert()
         await post.inc({Post.like_count: 1})
         await post.sync()
+
+        # Push notification to post author
+        await push_notification(
+            recipient_id=post.author_id,
+            actor_id=user.id,
+            type="like",
+            post_id=post.id,
+        )
+
         return {"liked": True, "like_count": post.like_count}
+
+
+async def search_posts(
+    query: str,
+    cursor: Optional[str] = None,
+    limit: int = 20,
+) -> FeedResponse:
+    """Search posts by hashtag (prefix # stripped) or keyword in caption."""
+    # Strip leading # if user types '#travel'
+    tag = query.lstrip("#").lower()
+
+    base_query = Post.find(
+        {"$or": [
+            {"hashtags": tag},
+            {"$text": {"$search": query}},
+        ]},
+        Post.is_archived == False,
+    )
+
+    if cursor:
+        base_query = base_query.find(Post.created_at < datetime.fromisoformat(cursor))
+
+    posts = await base_query.sort(-Post.created_at).limit(limit + 1).to_list()
+
+    has_more = len(posts) > limit
+    posts = posts[:limit]
+    next_cursor = posts[-1].created_at.isoformat() if has_more and posts else None
+
+    return FeedResponse(
+        posts=[_to_out(p) for p in posts],
+        next_cursor=next_cursor,
+        has_more=has_more,
+    )
+
+
+async def archive_post(post_id: str, current_user: User) -> dict:
+    """Toggle archive/unarchive a post."""
+    post = await Post.get(PydanticObjectId(post_id))
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+    if str(post.author_id) != str(current_user.id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not your post")
+
+    post.is_archived = not post.is_archived
+    await post.save()
+    return {"is_archived": post.is_archived}
+
+
+async def get_explore_feed(
+    cursor: Optional[str] = None,
+    limit: int = 20,
+) -> FeedResponse:
+    """Global explore feed — most recent public posts, no follow filter."""
+    base_query = Post.find(Post.is_archived == False)
+
+    if cursor:
+        base_query = base_query.find(Post.created_at < datetime.fromisoformat(cursor))
+
+    posts = await base_query.sort(-Post.created_at).limit(limit + 1).to_list()
+
+    has_more = len(posts) > limit
+    posts = posts[:limit]
+    next_cursor = posts[-1].created_at.isoformat() if has_more and posts else None
+
+    return FeedResponse(
+        posts=[_to_out(p) for p in posts],
+        next_cursor=next_cursor,
+        has_more=has_more,
+    )
+
+
+async def get_user_posts(
+    user_id: str,
+    cursor: Optional[str] = None,
+    limit: int = 20,
+) -> FeedResponse:
+    """Get all posts by a specific user (profile grid)."""
+    base_query = Post.find(
+        Post.author_id == PydanticObjectId(user_id),
+        Post.is_archived == False,
+    )
+
+    if cursor:
+        base_query = base_query.find(Post.created_at < datetime.fromisoformat(cursor))
+
+    posts = await base_query.sort(-Post.created_at).limit(limit + 1).to_list()
+
+    has_more = len(posts) > limit
+    posts = posts[:limit]
+    next_cursor = posts[-1].created_at.isoformat() if has_more and posts else None
+
+    return FeedResponse(
+        posts=[_to_out(p) for p in posts],
+        next_cursor=next_cursor,
+        has_more=has_more,
+    )

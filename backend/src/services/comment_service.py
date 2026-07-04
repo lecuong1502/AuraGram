@@ -3,6 +3,8 @@ from beanie import PydanticObjectId
 from src.models import Post, Comment, User
 from src.models.comment import Reply
 from src.schemas.comment import CommentCreateRequest, CommentOut, ReplyCreateRequest
+from src.services.notification_service import push_notification
+
 
 def _reply_to_out(r: Reply) -> dict:
     return {
@@ -13,6 +15,7 @@ def _reply_to_out(r: Reply) -> dict:
         "mention_id": str(r.mention_id) if r.mention_id else None,
         "created_at": r.created_at.isoformat(),
     }
+
 
 def _comment_to_out(c: Comment) -> CommentOut:
     return CommentOut(
@@ -26,13 +29,15 @@ def _comment_to_out(c: Comment) -> CommentOut:
         created_at=c.created_at.isoformat(),
     )
 
+
 async def list_comments(post_id: str, limit: int = 20, skip: int = 0) -> list[CommentOut]:
     comments = await Comment.find(
         Comment.post_id == PydanticObjectId(post_id),
         Comment.is_deleted == False,
-    ).sort([("is_pinned", -1), ("created_at", 1)]).skip(skip).limit(limit).to_list()
+    ).sort([(("is_pinned", -1)), ("created_at", 1)]).skip(skip).limit(limit).to_list()
 
     return [_comment_to_out(c) for c in comments]
+
 
 async def add_comment(post_id: str, user: User, data: CommentCreateRequest) -> CommentOut:
     post = await Post.get(PydanticObjectId(post_id))
@@ -46,7 +51,18 @@ async def add_comment(post_id: str, user: User, data: CommentCreateRequest) -> C
     )
     await comment.insert()
     await post.inc({Post.comment_count: 1})
+
+    # Push notification to post author
+    await push_notification(
+        recipient_id=post.author_id,
+        actor_id=user.id,
+        type="comment",
+        post_id=post.id,
+        comment_id=comment.id,
+    )
+
     return _comment_to_out(comment)
+
 
 async def delete_comment(comment_id: str, user: User) -> None:
     comment = await Comment.get(PydanticObjectId(comment_id))
@@ -62,6 +78,7 @@ async def delete_comment(comment_id: str, user: User) -> None:
     if post:
         await post.inc({Post.comment_count: -1})
 
+
 async def add_reply(comment_id: str, user: User, data: ReplyCreateRequest) -> CommentOut:
     comment = await Comment.get(PydanticObjectId(comment_id))
     if not comment or comment.is_deleted:
@@ -73,5 +90,30 @@ async def add_reply(comment_id: str, user: User, data: ReplyCreateRequest) -> Co
         mention_id=PydanticObjectId(data.mention_id) if data.mention_id else None,
     )
     comment.replies.append(reply)
+    await comment.save()
+
+    # Push notification to original commenter
+    await push_notification(
+        recipient_id=comment.author_id,
+        actor_id=user.id,
+        type="reply",
+        comment_id=comment.id,
+    )
+
+    return _comment_to_out(comment)
+
+
+async def pin_comment(comment_id: str, user: User) -> CommentOut:
+    """Post owner can pin/unpin a comment."""
+    comment = await Comment.get(PydanticObjectId(comment_id))
+    if not comment or comment.is_deleted:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+
+    from src.models import Post
+    post = await Post.get(comment.post_id)
+    if not post or str(post.author_id) != str(user.id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only post author can pin comments")
+
+    comment.is_pinned = not comment.is_pinned
     await comment.save()
     return _comment_to_out(comment)
