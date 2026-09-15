@@ -1,0 +1,22 @@
+/* frontend/src/components/layout/MainLayout.module.css */
+.layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.body {
+    display: flex;
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding-top: var(--navbar-height);
+}
+
+.main {
+    flex: 1;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: var(--space-4);
+}

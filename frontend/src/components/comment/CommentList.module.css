@@ -1,0 +1,71 @@
+/* frontend/src/components/comment/CommentList.module.css */
+.wrapper {
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.loading {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+.comment {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    align-items: baseline;
+}
+
+.username {
+    font-weight: var(--font-weight-semi);
+    font-size: var(--font-size-sm);
+}
+
+.text {
+    font-size: var(--font-size-sm);
+}
+
+.time {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    width: 100%;
+}
+
+.reply {
+    margin-left: var(--space-6);
+    display: flex;
+    gap: var(--space-1);
+}
+
+.input {
+    display: flex;
+    gap: var(--space-2);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-3);
+}
+
+.input input {
+    flex: 1;
+    background: none;
+    font-size: var(--font-size-sm);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-1);
+}
+
+.input button {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semi);
+    color: var(--color-primary);
+}
+
+.input button:disabled {
+    opacity: 0.5;
+}

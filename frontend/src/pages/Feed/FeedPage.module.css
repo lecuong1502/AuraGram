@@ -1,0 +1,21 @@
+/* frontend/src/pages/Feed/FeedPage.module.css */
+.page {
+    padding-bottom: var(--space-10);
+}
+
+.loading {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: var(--space-6);
+}
+
+.empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: var(--space-10);
+    line-height: 2;
+}
+
+.sentinel {
+    height: 1px;
+}

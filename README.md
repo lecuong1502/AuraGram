@@ -61,10 +61,10 @@ auragram/
 ## 🚀 Roadmap
 
 ### Phase 1 — Foundation ✅
-- [ ] Register / Login (JWT)
-- [ ] Post feed (image + caption + like)
-- [ ] Image upload to Cloudinary
-- [ ] Profile page with photo grid
+- [x] Register / Login (JWT)
+- [x] Post feed (image + caption + like)
+- [x] Image upload to Cloudinary
+- [x] Profile page with photo grid
 
 ### Phase 2 — AI Core 🤖
 - [ ] **Auto Caption & Hashtag**: Generate captions and hashtags from images using LLaVA

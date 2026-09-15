@@ -1,0 +1,45 @@
+/* frontend/src/components/common/Avatar.module.css */
+.avatar {
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.initials {
+    font-weight: var(--font-weight-semi);
+    color: var(--color-text-muted);
+}
+
+.sm {
+    width: 32px;
+    height: 32px;
+    font-size: var(--font-size-sm);
+}
+
+.md {
+    width: 44px;
+    height: 44px;
+    font-size: var(--font-size-base);
+}
+
+.lg {
+    width: 80px;
+    height: 80px;
+    font-size: var(--font-size-xl);
+}
+
+.xl {
+    width: 150px;
+    height: 150px;
+    font-size: 48px;
+}

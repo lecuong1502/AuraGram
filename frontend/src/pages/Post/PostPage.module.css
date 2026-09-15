@@ -1,0 +1,81 @@
+/* frontend/src/pages/Post/PostPage.module.css */
+.page {
+    padding: var(--space-6) 0;
+}
+
+.loading {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: var(--space-10);
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.media {
+    background: #000;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--color-border);
+}
+
+.header {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.username {
+    font-weight: var(--font-weight-semi);
+}
+
+.caption {
+    padding: var(--space-4);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+}
+
+.comments {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+.actions {
+    padding: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.likeBtn {
+    font-weight: var(--font-weight-semi);
+    font-size: var(--font-size-base);
+    text-align: left;
+}
+
+.liked {
+    color: var(--color-danger);
+}
+
+.time {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}

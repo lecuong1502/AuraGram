@@ -1,0 +1,58 @@
+/* frontend/src/components/post/CreatePostModal.module.css */
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.dropzone {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+    transition: border-color var(--transition-fast);
+}
+
+.dropzone:hover {
+    border-color: var(--color-primary);
+}
+
+.uploadIcon {
+    font-size: 40px;
+}
+
+.previews {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-1);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.preview {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.caption {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+}
+
+.charCount {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    text-align: right;
+}
