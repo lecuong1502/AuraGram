@@ -1,7 +1,8 @@
+// frontend/src/hooks/useAuth.js
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "@/api/auth.api";
-import { usersApi } from "@/api/users.api";
+import { authApi } from "@/api/authApi";
+import { usersApi } from "@/api/usersApi";
 import { useAuthStore } from "@/store/authStore";
 
 export function useMe() {
@@ -17,7 +18,6 @@ export function useMe() {
 export function useLogin() {
     const { setTokens } = useAuthStore();
     const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: authApi.login,
         onSuccess: (data) => {
@@ -29,12 +29,9 @@ export function useLogin() {
 
 export function useRegister() {
     const { setTokens } = useAuthStore();
-
     return useMutation({
         mutationFn: authApi.register,
-        onSuccess: (data) => {
-            setTokens(data.access_token, data.refresh_token);
-        },
+        onSuccess: (data) => setTokens(data.access_token, data.refresh_token),
     });
 }
 
@@ -42,7 +39,6 @@ export function useLogout() {
     const { logout } = useAuthStore();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-
     return useMutation({
         mutationFn: authApi.logout,
         onSettled: () => {

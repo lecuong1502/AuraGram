@@ -1,3 +1,4 @@
+// frontend/src/api/notificationsApi.js
 import client from "./client";
 
 export const notificationsApi = {

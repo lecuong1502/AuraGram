@@ -1,7 +1,7 @@
 // frontend/src/components/comment/CommentList.jsx
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { commentsApi } from "@/api/comments.api";
+import { commentsApi } from "@/api/commentsApi";
 import { useMe } from "@/hooks/useAuth";
 import Avatar from "@/components/common/Avatar";
 import { formatRelativeTime } from "@/utils/format";

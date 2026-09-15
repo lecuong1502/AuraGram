@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { postsApi } from "@/api/posts.api";
+import { postsApi } from "@/api/postsApi";
 import { useToggleLike } from "@/hooks/usePosts";
 import PostMedia from "@/components/post/PostMedia";
 import CommentList from "@/components/comment/CommentList";

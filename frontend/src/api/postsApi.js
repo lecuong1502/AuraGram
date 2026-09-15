@@ -1,8 +1,8 @@
+// frontend/src/api/postsApi.js
 import client from "./client";
 
 export const postsApi = {
-    getFeed: (cursor) =>
-        client.get("/posts/feed", { params: { cursor } }).then((r) => r.data),
+    getFeed: (cursor) => client.get("/posts/feed", { params: { cursor } }).then((r) => r.data),
     getPost: (postId) => client.get(`/posts/${postId}`).then((r) => r.data),
     createPost: (caption, files) => {
         const form = new FormData();

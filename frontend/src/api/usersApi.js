@@ -1,3 +1,4 @@
+// frontend/src/api/usersApi.js
 import client from "./client";
 
 export const usersApi = {

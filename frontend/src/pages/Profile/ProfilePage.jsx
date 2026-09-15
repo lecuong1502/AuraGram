@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useProfile, useFollow } from "@/hooks/useProfile";
 import { useMe } from "@/hooks/useAuth";
-import { postsApi } from "@/api/posts.api";
+import { postsApi } from "@/api/postsApi";
 import Avatar from "@/components/common/Avatar";
 import Button from "@/components/common/Button";
 import { formatCount } from "@/utils/format";

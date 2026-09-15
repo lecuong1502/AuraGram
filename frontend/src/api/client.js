@@ -6,16 +6,12 @@ const client = axios.create({
     timeout: 15000,
 });
 
-// Attach access token to every request
 client.interceptors.request.use((config) => {
     const token = useAuthStore.getState().accessToken;
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
 });
 
-// Auto-refresh on 401
 client.interceptors.response.use(
     (res) => res,
     async (error) => {
@@ -23,7 +19,7 @@ client.interceptors.response.use(
         if (error.response?.status === 401 && !original._retry) {
             original._retry = true;
             try {
-                const { refreshToken, setTokens, logout } = useAuthStore.getState();
+                const { refreshToken, setTokens } = useAuthStore.getState();
                 const { data } = await axios.post(
                     `${import.meta.env.VITE_API_URL}/auth/refresh`,
                     { refresh_token: refreshToken }
